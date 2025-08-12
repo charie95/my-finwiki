@@ -7,8 +7,29 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "my-finwiki",
-  description: "Personal finance wiki",
+  title: "my-finwiki - 금융 키워드 검색 서비스",
+  description: "금융/경제 키워드에 대한 뉴스와 유튜브 영상을 한 번에!",
+  openGraph: {
+    type: "website",
+    url: "https://my-finwiki.vercel.app/",
+    title: "my-finwiki - 금융 키워드 검색 서비스",
+    description: "금융/경제 키워드에 대한 뉴스와 유튜브 영상을 한 번에!",
+    siteName: "my-finwiki",
+    images: [
+      {
+        url: "https://my-finwiki.vercel.app/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "my-finwiki 메인 미리보기 이미지",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "my-finwiki - 금융 키워드 검색 서비스",
+    description: "금융/경제 키워드에 대한 뉴스와 유튜브 영상을 한 번에!",
+    images: ["https://my-finwiki.vercel.app/og-image.png"],
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
