@@ -23,7 +23,7 @@
 
 - **🔖 북마크**
   - 관심 있는 뉴스/영상 북마크 저장
-  - 로컬스토리지(`zustand + persist`)로 새로고침 후에도 유지
+  - 로컬스토리지로 새로고침 후에도 유지
 
 - **💡 설명 생성**
   - OpenAI API를 통해 키워드에 대한 간단한 설명 자동 생성
@@ -40,7 +40,6 @@
 |-----------------|-------|
 | **Framework**   | [Next.js 14](https://nextjs.org/) |
 | **Language**    | [TypeScript](https://www.typescriptlang.org/) |
-| **State Mgmt**  | [Zustand](https://github.com/pmndrs/zustand) (persist middleware) |
 | **UI**          | [Tailwind CSS](https://tailwindcss.com/) |
 | **API**         | Naver News API, YouTube Data API, OpenAI API |
 | **Deploy**      | [Vercel](https://vercel.com/) |
