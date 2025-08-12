@@ -19,3 +19,22 @@ export interface SearchResponse {
   videos: NewsItem[];
   next?: { naverStart?: number; ytPage?: string };
 }
+
+export interface YouTubeLite {
+  id: string;
+  title: string;
+  description?: string;
+  channelTitle?: string;
+  publishedAt?: string;
+}
+
+export const ytToNews = (v: YouTubeLite): NewsItem => ({
+  id: v.id,
+  source: "youtube",
+  title: v.title,
+  summary: v.description ?? "",
+  url: `https://www.youtube.com/watch?v=${v.id}`,
+  author: v.channelTitle,
+  publishedAt: v.publishedAt,
+  host: "youtube.com",
+});

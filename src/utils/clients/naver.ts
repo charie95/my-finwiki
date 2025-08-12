@@ -22,8 +22,20 @@ const WL = new Set([
   "asiae.co.kr",
 ]);
 
-/** ---- 초간단 캐시 ---- */
-const cache = new Map<string, { at: number; data: any }>();
+/** ---- Naver 원본 타입(최소 필드만) ---- */
+type NaverRawItem = {
+  title: string;
+  originallink?: string;
+  link?: string;
+  description?: string;
+  pubDate?: string;
+};
+type NaverRawResponse = {
+  items?: NaverRawItem[];
+};
+
+/** ---- 초간단 캐시 (no any) ---- */
+const cache = new Map<string, { at: number; data: unknown }>();
 const TTL = 10 * 60 * 1000;
 const now = () => Date.now();
 const get = <T>(k: string): T | null => {
@@ -35,7 +47,7 @@ const get = <T>(k: string): T | null => {
   }
   return v.data as T;
 };
-const set = (k: string, d: any) => cache.set(k, { at: now(), data: d });
+const set = <T>(k: string, d: T) => cache.set(k, { at: now(), data: d });
 
 /**
  * 네이버 뉴스 호출(기본형)
@@ -43,7 +55,7 @@ const set = (k: string, d: any) => cache.set(k, { at: now(), data: d });
  * - start/display: 네이버 페이징(1-based)
  * - 반환: { items, next }
  */
-export async function fetchNaver(query: string, start = 1, display = 6) {
+export async function fetchNaver(query: string, start = 1, display = 6): Promise<{ items: NewsItem[]; next: number }> {
   if (!CID || !CSEC) return { items: [] as NewsItem[], next: start + display };
 
   const url = new URL(NAVER_NEWS_URL);
@@ -53,7 +65,7 @@ export async function fetchNaver(query: string, start = 1, display = 6) {
   url.searchParams.set("sort", "date");
 
   const key = `naver:${url.searchParams.toString()}`;
-  const hit = get<any>(key);
+  const hit = get<{ items: NewsItem[]; next: number }>(key);
   if (hit) return hit;
 
   const res = await fetch(url.toString(), {
@@ -61,10 +73,10 @@ export async function fetchNaver(query: string, start = 1, display = 6) {
   });
   if (!res.ok) return { items: [] as NewsItem[], next: start + display };
 
-  const json = await res.json();
-  const out = normalizeNaver(json); // title/summary 디코딩+strip, host 정리
+  const json = (await res.json()) as NaverRawResponse;
+  const out = normalizeNaver(json); // -> { items: NewsItem[]; next: number } 라고 가정
   set(key, out);
-  return out as { items: NewsItem[]; next: number };
+  return out;
 }
 
 /**
@@ -73,8 +85,8 @@ export async function fetchNaver(query: string, start = 1, display = 6) {
  * - isFinanceContent(공통 스코어 필터)로 후처리
  * - WL(화이트리스트) 매체는 우선 통과
  */
-export async function searchNaverStrict(keyword: string, need = 6, start = 1, display = 6) {
-  let all: NewsItem[] = [];
+export async function searchNaverStrict(keyword: string, need = 6, start = 1, display = 6): Promise<NewsItem[]> {
+  const all: NewsItem[] = []; // 재할당 없으므로 const
 
   // 앵커를 붙여 순차 호출 (불필요한 동시성 방지)
   for (const a of FIN_ANCHORS) {
@@ -113,7 +125,6 @@ export async function searchNaverStrict(keyword: string, need = 6, start = 1, di
     for (const it of items) {
       const k = it.url ?? it.title;
       if (k && !s2.has(k)) {
-        // 보강분도 스코어 필터 한 번 더
         const ok =
           isFinanceContent(`${it.title} ${it.summary ?? ""}`, it.host ?? "", 1) || (it.host && WL.has(it.host));
         if (!ok) continue;

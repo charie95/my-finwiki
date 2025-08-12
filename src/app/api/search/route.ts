@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { SearchResponse, NewsItem } from "@/app/types/search";
+import { SearchResponse, NewsItem, ytToNews } from "@/app/types/search";
 import { isFinanceKeyword } from "@/utils/filters/isFinance";
 import { isFinanceContent } from "@/utils/filters/isFinanceContent";
 import { fetchNaver, searchNaverStrict } from "@/utils/clients/naver";
@@ -52,12 +52,12 @@ export async function GET(req: NextRequest) {
   // 영상만(더보기)
   if (only === "videos") {
     const yt = await fetchYouTube(keyword, ytPage, need, { strict });
-    return NextResponse.json(<SearchResponse>{
+    return NextResponse.json<SearchResponse>({
       isFinance: true,
       keyword,
       description: "",
       news: [],
-      videos: yt.items,
+      videos: yt.items.map(ytToNews),
       next: { ytPage: yt.nextPageToken },
     });
   }
