@@ -28,7 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <nav className="flex items-center gap-2">
               <Link
                 href="/bookmarks"
-                className="no-underline rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white/90 hover:no-underline bg-white/10 transition"
+                className="no-underline rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white/90 hover:bg-white/10 transition"
               >
                 북마크
               </Link>
