@@ -1,30 +1,50 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f7fc;    /* 부드러운 연그레이(화이트톤) */
+  --foreground: #23272f;    /* 딥그레이, 가독성용 */
+  --primary: #558cff;       /* 브랜드 블루 */
+  --secondary: #edf3ff;     /* 밝은 블루 */
+  --border-radius: 16px;
+  --transition: 0.18s cubic-bezier(0.33,1,0.68,1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* 다크모드 지원 예시 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #101215;
     --foreground: #ededed;
+    --secondary: #23272f;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'SUIT Variable', 'Pretendard', 'Noto Sans KR', sans-serif;
+  transition: background var(--transition), color var(--transition);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: #3367d6;
+  text-decoration: underline;
+}
+
+/* 버튼/카드 등에 적용할 공통 라운드 */
+.rounded-xl {
+  border-radius: var(--border-radius);
+}
+
+/* 스크롤바 숨기기 */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
