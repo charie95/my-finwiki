@@ -15,8 +15,7 @@ export default function RecommendedKeywords() {
 
   // 랜덤 키워드 추출
   const getRandomKeywords = () => {
-    return RECOMMENDED_KEYWORDS
-      .slice()
+    return RECOMMENDED_KEYWORDS.slice()
       .sort(() => Math.random() - 0.5)
       .slice(0, KEYWORD_COUNT);
   };
@@ -35,7 +34,7 @@ export default function RecommendedKeywords() {
 
   return (
     <section className="my-8 w-full max-w-xl mx-auto">
-      <div className="mb-2 text-gray-700 font-semibold text-center">추천 키워드</div>
+      <div className="mb-2 text-gray-400 font-semibold text-center">추천 키워드</div>
       <div className="relative h-12 w-full">
         <AnimatePresence mode="wait">
           <motion.div
