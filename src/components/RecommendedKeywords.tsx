@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { RECOMMENDED_KEYWORDS } from "@/data/recommendedKeywords";
 import { AnimatePresence, motion } from "framer-motion";
 
-const KEYWORD_COUNT = 7;
-const INTERVAL = 10000;
+const KEYWORD_COUNT = 6;
+const INTERVAL = 3000;
 
 export default function RecommendedKeywords() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function RecommendedKeywords() {
         <AnimatePresence mode="wait">
           <motion.div
             key={motionKey}
-            className="flex gap-2 overflow-x-auto whitespace-nowrap py-1 absolute w-full scrollbar-hide justify-center"
+            className="flex flex-wrap gap-2 justify-center py-1"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
