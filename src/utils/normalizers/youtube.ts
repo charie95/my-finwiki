@@ -12,12 +12,18 @@ const clean = (s?: string) =>
 
 // YouTube Search API 최소 타입(사용하는 필드만)
 type YTId = { videoId?: string } | string | undefined;
+type YTThumbnail = { url?: string } | undefined;
 type YTSnippet =
   | {
       title?: string;
       description?: string;
       channelTitle?: string;
       publishedAt?: string;
+      thumbnails?: {
+        high?: YTThumbnail;
+        medium?: YTThumbnail;
+        default?: YTThumbnail;
+      };
     }
   | undefined;
 
@@ -42,15 +48,23 @@ export function normalizeYouTube(json: YTSearchResponse) {
     if (!vid) continue;
 
     const sn = it.snippet ?? {};
+
+    const thumb =
+      sn.thumbnails?.high?.url ||
+      sn.thumbnails?.medium?.url ||
+      sn.thumbnails?.default?.url ||
+      `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`;
+
     items.push({
       id: vid,
       source: "youtube",
       title: clean(sn.title),
       summary: clean(sn.description),
-      url: `https://www.youtube.com/watch?v=${vid}`, // ✅ 표준 URL
+      url: `https://www.youtube.com/watch?v=${vid}`,
       author: sn.channelTitle,
       publishedAt: sn.publishedAt,
       host: "youtube.com",
+      thumbnail: thumb, // ✅ 추가
     });
   }
 

@@ -9,6 +9,7 @@ export interface NewsItem {
   author?: string;
   publishedAt?: string;
   host?: string;
+  thumbnail?: string;
 }
 
 export interface SearchResponse {
