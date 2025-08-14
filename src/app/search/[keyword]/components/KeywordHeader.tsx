@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 type Bookmark = {
   keyword: string;
@@ -14,13 +15,11 @@ function readBookmarks(): Bookmark[] {
   try {
     const raw = localStorage.getItem(LS_KEY);
     const list = raw ? (JSON.parse(raw) as Bookmark[]) : [];
-    // 타입 가드(필수 필드만 확인)
     return Array.isArray(list) ? list.filter((b) => b && typeof b.keyword === "string") : [];
   } catch {
     return [];
   }
 }
-
 function writeBookmarks(list: Bookmark[]) {
   localStorage.setItem(LS_KEY, JSON.stringify(list));
 }
@@ -33,18 +32,23 @@ export default function KeywordHeader({ keyword }: KeywordHeaderProps) {
   const [bookmarked, setBookmarked] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
-  // 현재 페이지 URL (SSR 안전)
-  const shareUrl = useMemo(() => {
-    if (typeof window !== "undefined") return window.location.href;
-    return `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/search/${encodeURIComponent(keyword)}`;
-  }, [keyword]);
+  // ✅ 현재 경로/쿼리 반영
+  const pathname = usePathname(); // e.g. /search/삼성전자
+  const searchParams = useSearchParams(); // e.g. strict=1&ytPage=2
 
-  // 진입/키워드 변경 시 북마크 여부 동기화
+  // ✅ 항상 최신 URL 생성 (SSR 안전)
+  const shareUrl = useMemo(() => {
+    const origin = typeof window !== "undefined" ? window.location.origin : process.env.NEXT_PUBLIC_BASE_URL ?? "";
+    const qs = searchParams?.toString();
+    const path = pathname || `/search/${encodeURIComponent(keyword)}`;
+    return `${origin}${path}${qs ? `?${qs}` : ""}`;
+  }, [pathname, searchParams, keyword]);
+
+  // 북마크 여부 동기화 (키워드 기준 + 다른 탭 동기화)
   useEffect(() => {
     const has = readBookmarks().some((b) => b.keyword === keyword);
     setBookmarked(has);
 
-    // 다른 탭에서 변경될 때 동기화
     const onStorage = (e: StorageEvent) => {
       if (e.key !== LS_KEY) return;
       const nowHas = readBookmarks().some((b) => b.keyword === keyword);
@@ -59,7 +63,8 @@ export default function KeywordHeader({ keyword }: KeywordHeaderProps) {
     window.setTimeout(() => setToast(null), 1500);
   };
 
-  const handleBookmark = () => {
+  // ✅ 최신 shareUrl로 북마크 저장(같은 키워드는 갱신)
+  const handleBookmark = useCallback(() => {
     const list = readBookmarks();
     if (bookmarked) {
       writeBookmarks(list.filter((b) => b.keyword !== keyword));
@@ -67,29 +72,27 @@ export default function KeywordHeader({ keyword }: KeywordHeaderProps) {
       showToast("북마크를 해제했어요.");
     } else {
       const item: Bookmark = { keyword, url: shareUrl, savedAt: Date.now() };
-      // 중복 제거 후 맨 앞에
       const next = [item, ...list.filter((b) => b.keyword !== keyword)];
       writeBookmarks(next);
       setBookmarked(true);
       showToast("북마크에 저장했어요.");
     }
-  };
+  }, [bookmarked, keyword, shareUrl]);
 
-  const handleShare = async () => {
+  // ✅ 네이티브 공유 → 폴백 순서, 항상 최신 shareUrl 사용
+  const handleShare = useCallback(async () => {
     try {
-      // 모바일/지원 브라우저: 네이티브 공유
       if (navigator.share) {
         await navigator.share({ title: keyword, url: shareUrl });
         showToast("공유를 시작했어요.");
         return;
       }
-      // 폴백: 클립보드 복사
       await navigator.clipboard.writeText(shareUrl);
       showToast("링크를 복사했어요.");
     } catch {
       showToast("복사/공유에 실패했어요.");
     }
-  };
+  }, [keyword, shareUrl]);
 
   return (
     <header className="flex items-center justify-center gap-3 mb-4">
@@ -117,7 +120,6 @@ export default function KeywordHeader({ keyword }: KeywordHeaderProps) {
         🔗 공유
       </button>
 
-      {/* 가벼운 토스트 */}
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-xl bg-black/80 text-white text-sm px-3 py-2">
           {toast}
