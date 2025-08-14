@@ -4,7 +4,7 @@ export default function NewsList({ items = [] }: { items?: NewsItem[] }) {
   if (!items?.length) {
     return (
       <ul className="grid grid-cols-1">
-        <li className="text-gray-400">뉴스가 없습니다.</li>
+        <li className="text-neutral-500 dark:text-white/50">뉴스가 없습니다.</li>
       </ul>
     );
   }
@@ -32,9 +32,11 @@ export default function NewsList({ items = [] }: { items?: NewsItem[] }) {
               rel="noopener noreferrer"
               aria-label={it.title}
               className={[
-                "block rounded-2xl border border-white/10 bg-white/5 p-5",
-                "hover:bg-white/10 transition",
-                "no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
+                // 카드 톤: 라이트/다크 동시 대응
+                "block rounded-2xl border p-5 transition no-underline",
+                "bg-white border-neutral-200 hover:bg-neutral-50",
+                "dark:bg-white/5 dark:border-white/10 dark:hover:bg-white/10",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
                 !isClickable && "pointer-events-none opacity-60",
               ]
                 .filter(Boolean)
@@ -44,29 +46,42 @@ export default function NewsList({ items = [] }: { items?: NewsItem[] }) {
               {(it.host || it.source) && (
                 <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px]">
                   {it.host && (
-                    <span className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-white/60">
+                    <span
+                      className="rounded-md border px-2 py-0.5
+                      border-neutral-200 bg-neutral-100 text-neutral-600
+                      dark:border-white/10 dark:bg-white/5 dark:text-white/60"
+                    >
                       {it.host}
                     </span>
                   )}
-                  <span className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-white/50">
+                  <span
+                    className="rounded-md border px-2 py-0.5
+                    border-neutral-200 bg-neutral-100 text-neutral-600
+                    dark:border-white/10 dark:bg-white/5 dark:text-white/60"
+                  >
                     {it.source}
                   </span>
                 </div>
               )}
 
               {/* 제목 */}
-              <h3 className="text-[15px] sm:text-base font-semibold text-white/90 line-clamp-2">
+              <h3
+                className="text-[15px] sm:text-base font-semibold
+                text-neutral-900 dark:text-white/90 line-clamp-2"
+              >
                 {it.title}
-                <span aria-hidden className="ml-1 align-middle text-white/40">
+                <span aria-hidden className="ml-1 align-middle text-neutral-400 dark:text-white/40">
                   ↗
                 </span>
               </h3>
 
               {/* 요약 */}
-              {it.summary && <p className="mt-2 text-sm text-white/60 line-clamp-3">{it.summary}</p>}
+              {it.summary && (
+                <p className="mt-2 text-sm text-neutral-600 dark:text-white/60 line-clamp-3">{it.summary}</p>
+              )}
 
               {/* 날짜 */}
-              {dateText && <p className="mt-3 text-xs text-white/40">{dateText}</p>}
+              {dateText && <p className="mt-3 text-xs text-neutral-500 dark:text-white/40">{dateText}</p>}
             </a>
           </li>
         );

@@ -30,7 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh bg-neutral-950 text-neutral-200`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-200`}
       >
         <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-transparent">
           <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
