@@ -7,28 +7,22 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://my-finwiki.vercel.app"), // ⭐️ 절대 URL 계산 기준
   title: "my-finwiki - 금융 키워드 검색 서비스",
   description: "금융/경제 키워드에 대한 뉴스와 유튜브 영상을 한 번에!",
   openGraph: {
     type: "website",
-    url: "https://my-finwiki.vercel.app/",
+    url: "/", // metadataBase 기준으로 절대 URL로 변환됨
+    siteName: "my-finwiki",
     title: "my-finwiki - 금융 키워드 검색 서비스",
     description: "금융/경제 키워드에 대한 뉴스와 유튜브 영상을 한 번에!",
-    siteName: "my-finwiki",
-    images: [
-      {
-        url: "https://my-finwiki.vercel.app/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "my-finwiki 메인 미리보기 이미지",
-      },
-    ],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "my-finwiki 메인 미리보기 이미지" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "my-finwiki - 금융 키워드 검색 서비스",
     description: "금융/경제 키워드에 대한 뉴스와 유튜브 영상을 한 번에!",
-    images: ["https://my-finwiki.vercel.app/og-image.png"],
+    images: ["/og-image.png"],
   },
 };
 
