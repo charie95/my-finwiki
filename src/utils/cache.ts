@@ -1,7 +1,23 @@
-type Entry<T> = { value: T; expiresAt: number };
-const store = new Map<string, Entry<any>>();
-const order: string[] = []; // 아주 단순한 LRU 큐
-const inflight = new Map<string, Promise<any>>();
+type Entry<T = unknown> = { value: T; expiresAt: number };
+
+// HMR에서도 유지하려고 globalThis에 저장해둠(선택적)
+const g = globalThis as typeof globalThis & {
+  __searchCache?: {
+    store: Map<string, Entry<unknown>>;
+    order: string[];
+    inflight: Map<string, Promise<unknown>>;
+  };
+};
+
+g.__searchCache ??= {
+  store: new Map<string, Entry<unknown>>(),
+  order: [],
+  inflight: new Map<string, Promise<unknown>>(),
+};
+
+const store = g.__searchCache.store;
+const order = g.__searchCache.order;
+const inflight = g.__searchCache.inflight;
 
 function now() {
   return Date.now();
@@ -23,14 +39,14 @@ function touch(key: string) {
 }
 
 export function getCache<T>(key: string): T | null {
-  const e = store.get(key);
+  const e = store.get(key) as Entry<T> | undefined;
   if (!e) return null;
   if (now() > e.expiresAt) {
     store.delete(key);
     return null;
   }
   touch(key);
-  return e.value as T;
+  return e.value;
 }
 
 export function setCache<T>(key: string, value: T, ttlMs: number) {
@@ -40,10 +56,10 @@ export function setCache<T>(key: string, value: T, ttlMs: number) {
 }
 
 export async function dedupe<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const existed = inflight.get(key);
-  if (existed) return existed as Promise<T>;
+  const existed = inflight.get(key) as Promise<T> | undefined;
+  if (existed) return existed;
   const p = fn().finally(() => inflight.delete(key));
-  inflight.set(key, p);
+  inflight.set(key, p as Promise<unknown>);
   return p;
 }
 

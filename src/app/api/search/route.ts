@@ -8,10 +8,11 @@ import { getCache, setCache, dedupe, cacheEnabled, seconds } from "@/utils/cache
 import { keyAll, keyNews, keyVideos } from "@/utils/searchCacheKey";
 
 const LOG = process.env.SEARCH_CACHE_LOG === "1" || process.env.NODE_ENV !== "production";
+type LogFn = (...args: unknown[]) => void;
 function mkLogger() {
   const trace = Math.random().toString(36).slice(2, 8);
   const t0 = Date.now();
-  const log = (...args: any[]) => {
+  const log: LogFn = (...args) => {
     if (LOG) console.log("[search]", trace, ...args);
   };
   const since = () => Date.now() - t0;
@@ -177,8 +178,12 @@ export async function GET(req: NextRequest) {
         const desc = await mod.openaiExplain(keyword);
         log("subfetch", { part: "openai", tookMs: Date.now() - t, descLen: desc?.length ?? 0 });
         return desc;
-      } catch (e: any) {
-        log("subfetch-error", { part: "openai", tookMs: Date.now() - t, message: e?.message });
+      } catch (e: unknown) {
+        log("subfetch-error", {
+          part: "openai",
+          tookMs: Date.now() - t,
+          message: e instanceof Error ? e.message : String(e),
+        });
         return "";
       }
     })();
@@ -195,7 +200,7 @@ export async function GET(req: NextRequest) {
       keyword,
       description: desc || "",
       news,
-      videos: yt.items,
+      videos: yt.items.map(ytToNews),
       next: { naverStart: 7, ytPage: yt.nextPageToken },
     };
 
