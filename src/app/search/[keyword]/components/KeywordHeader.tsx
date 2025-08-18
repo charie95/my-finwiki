@@ -32,11 +32,11 @@ export default function KeywordHeader({ keyword }: KeywordHeaderProps) {
   const [bookmarked, setBookmarked] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
-  // ✅ 현재 경로/쿼리 반영
+  //현재 경로/쿼리 반영
   const pathname = usePathname(); // e.g. /search/삼성전자
   const searchParams = useSearchParams(); // e.g. strict=1&ytPage=2
 
-  // ✅ 항상 최신 URL 생성 (SSR 안전)
+  //항상 최신 URL 생성 (SSR 안전)
   const shareUrl = useMemo(() => {
     const origin = typeof window !== "undefined" ? window.location.origin : process.env.NEXT_PUBLIC_BASE_URL ?? "";
     const qs = searchParams?.toString();
@@ -63,7 +63,7 @@ export default function KeywordHeader({ keyword }: KeywordHeaderProps) {
     window.setTimeout(() => setToast(null), 1500);
   };
 
-  // ✅ 최신 shareUrl로 북마크 저장(같은 키워드는 갱신)
+  //최신 shareUrl로 북마크 저장(같은 키워드는 갱신)
   const handleBookmark = useCallback(() => {
     const list = readBookmarks();
     if (bookmarked) {
@@ -79,7 +79,7 @@ export default function KeywordHeader({ keyword }: KeywordHeaderProps) {
     }
   }, [bookmarked, keyword, shareUrl]);
 
-  // ✅ 네이티브 공유 → 폴백 순서, 항상 최신 shareUrl 사용
+  //네이티브 공유 → 폴백 순서, 항상 최신 shareUrl 사용
   const handleShare = useCallback(async () => {
     try {
       if (navigator.share) {
