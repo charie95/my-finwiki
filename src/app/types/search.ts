@@ -27,6 +27,7 @@ export interface YouTubeLite {
   description?: string;
   channelTitle?: string;
   publishedAt?: string;
+  thumbnail?: string;
 }
 
 export const ytToNews = (v: YouTubeLite): NewsItem => ({
@@ -38,4 +39,5 @@ export const ytToNews = (v: YouTubeLite): NewsItem => ({
   author: v.channelTitle,
   publishedAt: v.publishedAt,
   host: "youtube.com",
+  thumbnail: v.thumbnail ?? (v.id ? `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg` : undefined),
 });

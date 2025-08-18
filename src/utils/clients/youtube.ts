@@ -3,12 +3,19 @@ import { isFinanceContent } from "@/utils/filters/isFinanceContent";
 
 /** ---- 최소 YouTube Raw 타입 ---- */
 type YTRawId = { videoId?: string };
+type YTRawThumb = { url?: string };
 type YTRawSnippet = {
   title?: string;
   description?: string;
   channelTitle?: string;
   publishedAt?: string;
-  thumbnails?: { default?: { url?: string } };
+  thumbnails?: {
+    default?: YTRawThumb;
+    medium?: YTRawThumb;
+    high?: YTRawThumb;
+    maxres?: YTRawThumb;
+    standard?: YTRawThumb;
+  };
 };
 type YTRawItem = { id?: YTRawId; snippet?: YTRawSnippet };
 export type YTRawResponse = {

@@ -200,7 +200,7 @@ export async function GET(req: NextRequest) {
       keyword,
       description: desc || "",
       news,
-      videos: yt.items.map(ytToNews),
+      videos: yt.items,
       next: { naverStart: 7, ytPage: yt.nextPageToken },
     };
 
