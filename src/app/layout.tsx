@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-200 flex flex-col`}
       >
         <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-transparent">
-          <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
+          <div className="w-full mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
             <Link href="/" className="inline-flex items-center gap-2 font-semibold no-underline hover:no-underline">
               <span className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] leading-none text-white/90">
                 FIN
@@ -50,8 +50,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </nav>
           </div>
         </header>
-        <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
-        <footer className="mt-auto mx-auto max-w-5xl px-4 pb-10 pt-6 text-xs text-white/40">
+        <main className="w-full mx-auto max-w-5xl px-4 py-6">{children}</main>
+        <footer className="w-full mt-auto mx-auto max-w-5xl px-4 pb-10 pt-6 text-xs text-white/40">
           © {new Date().getFullYear()} my-finwiki
         </footer>
       </body>
